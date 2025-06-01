@@ -7,17 +7,17 @@ import DatumFeld from "./FormularComponents/DatumFeld";
 import ArtSelect from "./FormularComponents/ArtSelect";
 import SchlagwörterCheckboxen from "./FormularComponents/SchlagwörterCheckboxen";
 import Rating from "./FormularComponents/Rating";
-import { sucheBuecher } from "../api/buchApi"; 
+import axios from "../api/axios";
 
-export default function BuchSuchForm() {
+export default function BuchAnlegenForm() {
   const methods = useForm({
     defaultValues: {
       isbn: "",
       titel: "",
       art: "",
-      preis: 50,
+      preis: 0,
       lieferbar: false,
-      datum: "",
+      datum: new Date().toISOString().split("T")[0],
       schlagwörter: [],
       rating: 0
     }
@@ -25,30 +25,18 @@ export default function BuchSuchForm() {
 
   const onSubmit = async (data: any) => {
     try {
-      // Filtere alle nicht-leeren Werte raus
-      const filteredData: Record<string, any> = {};
-      Object.entries(data).forEach(([key, value]) => {
-        if (
-          value !== "" &&
-          value !== null &&
-          !(Array.isArray(value) && value.length === 0)
-        ) {
-          filteredData[key] = value;
-        }
-      });
-
-      const result = await sucheBuecher(filteredData);
-      console.log("Suchergebnisse:", result);
-      // Optional: Ergebnisse im State speichern und anzeigen
-    } catch (error: any) {
-      alert("Fehler bei der Suche: " + error.message);
+      await axios.post('/rest', data); // baseURL wird automatisch vorangestellt
+      alert('Buch erfolgreich angelegt!');
+      methods.reset();
+    } catch (err: any) {
+      alert('Fehler: ' + (err.response?.data?.message || err.message));
     }
   };
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <h1>Suche</h1>
+        <h1>Buch anlegen</h1>
 
         <ISBNFeld />
         <TitelFeld />
@@ -59,7 +47,7 @@ export default function BuchSuchForm() {
         <SchlagwörterCheckboxen />
         <Rating />
 
-        <button disabled={methods.formState.isSubmitting}>Suchen</button>
+        <button disabled={methods.formState.isSubmitting}>Anlegen</button>
       </form>
     </FormProvider>
   );

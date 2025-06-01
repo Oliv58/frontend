@@ -2,11 +2,11 @@
 import axios from 'axios'
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000/rest', // passe das an dein Backend an
+  baseURL: 'https://localhost:3000', // passe das an dein Backend an
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json',   
   },
-  withCredentials: true, // wenn du Cookies nutzt (z.B. mit Keycloak)
+  withCredentials: false, // wenn du Cookies nutzt (z.B. mit Keycloak) //TODO: true setzen und dabei fehler beheben
 })
 
 export default axiosInstance
